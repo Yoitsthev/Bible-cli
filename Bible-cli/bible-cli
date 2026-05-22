@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+FILE="$HOME/Downloads/bible.go"
+CHAT_URL="https://needhim.echoglobal.org/chat/Chat_Now"   # replace this
+
+show_help() {
+    echo "bible-cli - simple Bible reader"
+    echo
+    echo "Usage:"
+    echo "  bible-cli --read               Read the bible"
+    echo "  bible-cli --search <text>      Search verses"
+    echo "  bible-cli --chat              Chat with other people"
+    echo "  bible-cli --help              Info"
+}
+
+case "$1" in
+    --read|"")
+        less "$FILE"
+        ;;
+
+    --search)
+        shift
+        if [ $# -eq 0 ]; then
+            echo "Error: provide a search term"
+            exit 1
+        fi
+        grep -i --color=always "$*" "$FILE" | less -R
+        ;;
+
+    --chat)
+        if command -v xdg-open >/dev/null 2>&1; then
+            xdg-open "$CHAT_URL"
+        else
+            echo "Open manually: $CHAT_URL"
+        fi
+        ;;
+
+    --help|-h)
+        show_help
+        ;;
+
+    *)
+        echo "Unknown option: $1"
+        echo
+        show_help
+        exit 1
+        ;;
+esac
